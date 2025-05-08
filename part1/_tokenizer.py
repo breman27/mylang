@@ -1,4 +1,4 @@
-from token import Token, TokenType
+from _token import Token, TokenType
 from grammar import *
 
 
@@ -71,4 +71,4 @@ if __name__ == "__main__":
     tokenizer = Tokenizer("(123 + 456) - 789 + 10 * 2 / 3")
     tokens = tokenizer.scan_tokens()
     for token in tokens:
-        print(token)
+        print(token.type)
