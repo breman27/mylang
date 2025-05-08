@@ -26,6 +26,11 @@ def is_symbol(c):
     return c in SYMBOL_MAP or c in TWO_CHAR_SYMBOLS
 
 
+def is_two_char_symbol(c):
+    """Check if the character is a two-character symbol."""
+    return c in TWO_CHAR_SYMBOLS
+
+
 def get_symbol_type(c):
     """Get the token type for a symbol."""
     return SYMBOL_MAP.get(c, None)

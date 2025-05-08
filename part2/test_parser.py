@@ -1,7 +1,7 @@
 import unittest
 from _tokenizer import Tokenizer
 from _token import TokenType
-from parser import Parser, Binary, Number
+from parser import Parser
 
 
 class TestParser(unittest.TestCase):

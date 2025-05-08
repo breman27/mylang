@@ -46,7 +46,7 @@ class Tokenizer:
             token_type = get_symbol_type(c)
 
             two = c + self.source[self.current : self.current + 1]
-            if is_symbol(two):
+            if is_two_char_symbol(two):
                 token_type = get_two_char_symbol_type(two)
                 self.current += 1
                 c = two

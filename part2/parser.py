@@ -1,27 +1,6 @@
 from _token import TokenType
 from _tokenizer import Tokenizer
-
-
-class Expr:
-    pass
-
-
-class Number(Expr):
-    def __init__(self, value: int):
-        self.value = value
-
-    def __repr__(self):
-        return f"Number({self.value})"
-
-
-class Binary(Expr):
-    def __init__(self, left: Expr, operator: str, right: Expr):
-        self.left = left
-        self.operator = operator
-        self.right = right
-
-    def __repr__(self):
-        return f"Binary({self.left}, {self.operator}, {self.right})"
+from abstract_syntax_tree import Number, Binary
 
 
 class Parser:
@@ -34,25 +13,45 @@ class Parser:
 
     def expression(self):
         """
-        expression : term ( ( '+' | '-' ) term )*
+        expression : addition
         """
-        expr = self.term()
+        return self.addition()
+
+    def addition(self):
+        """
+        addition : multiplication ( ( '+' | '-' ) multiplication )*
+        """
+        expr = self.multiplication()
 
         while self._match(TokenType.PLUS, TokenType.MINUS):
             operator = self._previous()
-            expr = Binary(expr, operator.type, self.term())
+            right = self.multiplication()
+            expr = Binary(expr, operator.type, right)
 
         return expr
 
-    def term(self):
+    def multiplication(self):
         """
-        term : factor ( ( '*' | '/' | '**' ) factor )*
+        multiplication : exponent ( ( '*' | '/' ) exponent )*
+        """
+        expr = self.exponent()
+
+        while self._match(TokenType.MULTIPLY, TokenType.DIVIDE):
+            operator = self._previous()
+            right = self.exponent()
+            expr = Binary(expr, operator.type, right)
+
+        return expr
+
+    def exponent(self):
+        """
+        exponent : factor ( '**' exponent )*
         """
         expr = self.factor()
 
-        while self._match(TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.EXPONENT):
+        while self._match(TokenType.EXPONENT):
             operator = self._previous()
-            right = self.factor()
+            right = self.exponent()
             expr = Binary(expr, operator.type, right)
 
         return expr

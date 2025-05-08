@@ -1,5 +1,5 @@
-from parser import Parser, Expr, Number, Binary
 from _token import TokenType
+from abstract_syntax_tree import Expr, Number, Binary
 
 
 class Interpreter:
