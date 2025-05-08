@@ -93,12 +93,3 @@ class Parser:
             self.current += 1
             return self.tokens[self.current]
         raise SyntaxError(error_message)
-
-
-if __name__ == "__main__":
-    # Example usage
-    tokens = input("calc: ")
-    tokens = Tokenizer(tokens).scan_tokens()
-    parser = Parser(tokens)
-    expression = parser.parse()
-    print(expression)  # Should print a representation of the parsed expression
