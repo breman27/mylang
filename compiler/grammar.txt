@@ -1,0 +1,4 @@
+GRAMMAR in EBNF (Extended Backus-Naur Form) Format
+
+expr    ::= term ( ("+" | "-") term )*
+term    ::= NUMBER
