@@ -1,4 +1,5 @@
-from _token import Token, TokenType
+from _token import TokenType
+from _tokenizer import Tokenizer
 
 
 class Expr:
@@ -32,34 +33,36 @@ class Parser:
         return self.expression()
 
     def expression(self):
+        """
+        expression : term ( ( '+' | '-' ) term )*
+        """
         expr = self.term()
 
         while self._match(TokenType.PLUS, TokenType.MINUS):
             operator = self._previous()
-            right = self.term()
-            if operator.type == TokenType.PLUS:
-                expr = expr + right
-            elif operator.type == TokenType.MINUS:
-                expr = expr - right
+            expr = Binary(expr, operator.type, self.term())
 
         return expr
 
     def term(self):
-        result = self.factor()
+        """
+        term : factor ( ( '*' | '/' | '**' ) factor )*
+        """
+        expr = self.factor()
 
-        while self._match(TokenType.MULTIPLY, TokenType.DIVIDE):
+        while self._match(TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.EXPONENT):
             operator = self._previous()
             right = self.factor()
-            if operator.type == TokenType.MULTIPLY:
-                result = result * right
-            elif operator.type == TokenType.DIVIDE:
-                result = result / right
+            expr = Binary(expr, operator.type, right)
 
-        return result
+        return expr
 
     def factor(self):
+        """
+        NUMBER | LEFT_PAREN expression RIGHT_PAREN
+        """
         if self._match(TokenType.NUMBER):
-            return self._previous().value
+            return Number(self._previous().value)
         elif self._match(TokenType.LEFT_PAREN):
             expr = self.expression()
             self._consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
@@ -95,12 +98,8 @@ class Parser:
 
 if __name__ == "__main__":
     # Example usage
-    tokens = [
-        Token(TokenType.NUMBER, "2", 2),
-        Token(TokenType.MULTIPLY, "*"),
-        Token(TokenType.NUMBER, "2", 2),
-        Token(TokenType.EOF, "", None),
-    ]
+    tokens = input("calc: ")
+    tokens = Tokenizer(tokens).scan_tokens()
     parser = Parser(tokens)
     expression = parser.parse()
     print(expression)  # Should print a representation of the parsed expression

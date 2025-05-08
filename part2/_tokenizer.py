@@ -45,6 +45,14 @@ class Tokenizer:
         elif is_symbol(c):
             token_type = get_symbol_type(c)
 
+            two = c + self.source[self.current : self.current + 1]
+            if is_symbol(two):
+                token_type = get_two_char_symbol_type(two)
+                self.current += 1
+                c = two
+            else:
+                token_type = get_symbol_type(c)
+
             if token_type is None:
                 raise SyntaxError(f"Unrecognized symbol: {c!r}")
 
@@ -68,7 +76,7 @@ class Tokenizer:
 
 
 if __name__ == "__main__":
-    tokenizer = Tokenizer("(123 + 456) - 789 + 10 * 2 / 3")
+    tokenizer = Tokenizer("(123 + 456) - 789 + 10 ** 2 / 3")
     tokens = tokenizer.scan_tokens()
     for token in tokens:
-        print(token.value)
+        print(token)

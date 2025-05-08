@@ -15,6 +15,7 @@ class TokenType(Enum):
     EQUALS = auto()
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
+    EXPONENT = auto()
     SYMBOL = auto()
     EOF = auto()
 
