@@ -1,5 +1,13 @@
 DIGITS = "0123456789"
-SYMBOLS = "+-"
+SYMBOL_MAP = {
+    "+": "PLUS",
+    "-": "MINUS",
+    "*": "MULTIPLY",
+    "/": "DIVIDE",
+    "=": "EQUALS",
+    "(": "LEFT_PAREN",
+    ")": "RIGHT_PAREN",
+}
 WHITESPACE = " \t\n\r"
 
 
@@ -10,7 +18,12 @@ def is_digit(c):
 
 def is_symbol(c):
     """Check if the character is a symbol."""
-    return c in SYMBOLS
+    return c in SYMBOL_MAP
+
+
+def get_symbol_type(c):
+    """Get the token type for a symbol."""
+    return SYMBOL_MAP.get(c, None)
 
 
 def is_whitespace(c):

@@ -1,4 +1,5 @@
 from enum import Enum, auto
+from typing import Any
 
 
 class TokenType(Enum):
@@ -18,13 +19,13 @@ class Token:
     A token class to represent a token in the input string.
     """
 
-    def __init__(self, type: TokenType, lexeme: str, literal_value: str = None):
+    def __init__(self, type: TokenType, lexeme: str, value: Any = None):
         """
         Initialize a token with its type, lexeme, and optional literal value.
         """
         self.type = type
         self.lexeme = lexeme
-        self.value = literal_value
+        self.value = value
 
     def __repr__(self):
         return f"Token({self.type}, {self.value})"

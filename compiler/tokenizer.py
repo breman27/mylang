@@ -43,10 +43,12 @@ class Tokenizer:
         if is_digit(c):
             self._number()
         elif is_symbol(c):
-            if c == "+":
-                self.tokens.append(Token(TokenType.PLUS, c))
-            else:
-                self.tokens.append(Token(TokenType.MINUS, c))
+            token_type = get_symbol_type(c)
+
+            if token_type is None:
+                raise SyntaxError(f"Unrecognized symbol: {c!r}")
+
+            self.tokens.append(Token(token_type, c))
         elif is_whitespace(c):
             pass  # skip whitespace
         else:
@@ -66,7 +68,7 @@ class Tokenizer:
 
 
 if __name__ == "__main__":
-    tokenizer = Tokenizer("123 + 456 - 789")
+    tokenizer = Tokenizer("(123 + 456) - 789 + 10 * 2 / 3")
     tokens = tokenizer.scan_tokens()
     for token in tokens:
         print(token)
