@@ -1,0 +1,11 @@
+GRAMMAR in EBNF (Extended Backus-Naur Form) Format
+
+program        ::= statement* EOF
+
+statement      ::= IDENTIFIER "=" expr | expr
+
+expr           ::= addition
+addition       ::= multiplication ( ("+" | "-") multiplication )*
+multiplication ::= exponent ( ("*" | "/") exponent )*
+exponent       ::= factor ( "**" exponent )?
+factor         ::= NUMBER | LEFT_PAREN expr RIGHT_PAREN

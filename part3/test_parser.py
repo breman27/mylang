@@ -2,7 +2,7 @@ import unittest
 from _tokenizer import Tokenizer
 from _token import TokenType
 from parser import Parser
-from abstract_syntax_tree import Expr, Number, Binary
+from abstract_syntax_tree import Number, Binary, Assignment
 
 
 class TestParser(unittest.TestCase):
@@ -16,7 +16,9 @@ class TestParser(unittest.TestCase):
         self.assertEqual(tokens[-1].type, TokenType.EOF)
 
         parser = Parser(tokens)
-        expression = parser.parse()
+        expressions = parser.parse()
+        # If parse() returns a list, get the first expression
+        expression = expressions[0] if isinstance(expressions, list) else expressions
 
         self.assertIsInstance(expression, Number)
         self.assertEqual(expression.value, 123)
@@ -34,7 +36,8 @@ class TestParser(unittest.TestCase):
         self.assertEqual(tokens[-1].type, TokenType.EOF)
 
         parser = Parser(tokens)
-        expression = parser.parse()
+        expressions = parser.parse()
+        expression = expressions[0] if isinstance(expressions, list) else expressions
         self.assertIsInstance(expression, Binary)
         self.assertEqual(expression.operator, TokenType.PLUS)
         self.assertIsInstance(expression.left, Number)
@@ -43,7 +46,6 @@ class TestParser(unittest.TestCase):
         self.assertEqual(expression.right.value, 2)
 
     def test_parentheses(self):
-
         # parsed AST should represent:
         #        *
         #      /   \
@@ -51,7 +53,6 @@ class TestParser(unittest.TestCase):
         #    / \
         #   1     2
         #
-
         tokens = Tokenizer("(1 + 2) * 3").scan_tokens()
         self.assertEqual(tokens[0].type, TokenType.LEFT_PAREN)
         self.assertEqual(tokens[1].type, TokenType.NUMBER)
@@ -63,7 +64,8 @@ class TestParser(unittest.TestCase):
         self.assertEqual(tokens[-1].type, TokenType.EOF)
 
         parser = Parser(tokens)
-        expression = parser.parse()
+        expressions = parser.parse()
+        expression = expressions[0] if isinstance(expressions, list) else expressions
 
         self.assertIsInstance(expression, Binary)
         self.assertEqual(expression.operator, TokenType.MULTIPLY)
@@ -78,7 +80,6 @@ class TestParser(unittest.TestCase):
 
     def test_bad_parentheses(self):
         # parsed AST should raise SyntaxError
-
         tokens = Tokenizer("(1 + 2 * 3").scan_tokens()
         self.assertEqual(tokens[0].type, TokenType.LEFT_PAREN)
         self.assertEqual(tokens[1].type, TokenType.NUMBER)
@@ -95,7 +96,8 @@ class TestParser(unittest.TestCase):
         tokens = Tokenizer("7 + 3 * (10 / (12 / (3 + 1) - 1))").scan_tokens()
 
         parser = Parser(tokens)
-        expression = parser.parse()
+        expressions = parser.parse()
+        expression = expressions[0] if isinstance(expressions, list) else expressions
 
         # The parsed AST should represent:
         #        +
@@ -150,6 +152,34 @@ class TestParser(unittest.TestCase):
 
         self.assertIsInstance(minus.right, Number)
         self.assertEqual(minus.right.value, 1)
+
+    def test_assignment(self):
+        # parsed AST should represent:
+        #        =
+        #      /   \
+        #     x     +
+        #          / \
+        #         1   2
+        tokens = Tokenizer("x = 1 + 2").scan_tokens()
+        self.assertEqual(tokens[0].type, TokenType.IDENTIFIER)
+        self.assertEqual(tokens[1].type, TokenType.ASSIGN)
+        self.assertEqual(tokens[2].type, TokenType.NUMBER)
+        self.assertEqual(tokens[3].type, TokenType.PLUS)
+        self.assertEqual(tokens[4].type, TokenType.NUMBER)
+        self.assertEqual(tokens[-1].type, TokenType.EOF)
+
+        parser = Parser(tokens)
+        expressions = parser.parse()
+        expression = expressions[0] if isinstance(expressions, list) else expressions
+
+        self.assertIsInstance(expression, Assignment)
+        self.assertEqual(expression.name, "x")
+        self.assertIsInstance(expression.value, Binary)
+        self.assertEqual(expression.value.operator, TokenType.PLUS)
+        self.assertIsInstance(expression.value.left, Number)
+        self.assertEqual(expression.value.left.value, 1)
+        self.assertIsInstance(expression.value.right, Number)
+        self.assertEqual(expression.value.right.value, 2)
 
 
 if __name__ == "__main__":
