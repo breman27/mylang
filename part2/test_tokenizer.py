@@ -25,6 +25,13 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(tokens[2].type, TokenType.NUMBER)
         self.assertEqual(tokens[-1].type, TokenType.EOF)
 
+    def test_parentheses(self):
+        tokens = Tokenizer("(8)").scan_tokens()
+        self.assertEqual(tokens[0].type, TokenType.LEFT_PAREN)
+        self.assertEqual(tokens[1].type, TokenType.NUMBER)
+        self.assertEqual(tokens[2].type, TokenType.RIGHT_PAREN)
+        self.assertEqual(tokens[-1].type, TokenType.EOF)
+
     def test_unrecognized_symbol(self):
         with self.assertRaises(SyntaxError):
             Tokenizer("$").scan_tokens()

@@ -1,0 +1,5 @@
+GRAMMAR in EBNF (Extended Backus-Naur Form) Format
+
+expr    ::= term ( ("+" | "-") term )*
+term    ::= factor (("*" | "/") factor)*
+factor  ::= NUMBER | LEFT_PAREN expr RIGHT_PAREN
