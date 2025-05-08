@@ -19,6 +19,9 @@ class Token:
     """
 
     def __init__(self, type: TokenType, lexeme: str, literal_value: str = None):
+        """
+        Initialize a token with its type, lexeme, and optional literal value.
+        """
         self.type = type
         self.lexeme = lexeme
         self.value = literal_value
