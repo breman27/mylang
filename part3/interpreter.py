@@ -1,5 +1,5 @@
 from _token import TokenType
-from abstract_syntax_tree import Expr, Number, Binary, Assignment, Variable
+from abstract_syntax_tree import Expr, Number, Binary, Assignment, Variable, Unary
 
 
 class Interpreter:
@@ -9,6 +9,13 @@ class Interpreter:
     def evaluate(self, expr: Expr) -> float:
         if isinstance(expr, Number):
             return expr.value
+
+        if isinstance(expr, Unary):
+            right = self.evaluate(expr.operand)
+            if expr.operator == TokenType.MINUS:
+                return -right
+            if expr.operator == TokenType.PLUS:
+                return +right
 
         if isinstance(expr, Binary):
             left = self.evaluate(expr.left)

@@ -61,9 +61,9 @@ class Parser:
 
     def exponent(self):
         """
-        exponent : factor ( '**' exponent )*
+        exponent : unary ( '**' exponent )*
         """
-        expr = self.factor()
+        expr = self.unary()
 
         while self._match(TokenType.EXPONENT):
             operator = self._previous()
@@ -71,6 +71,22 @@ class Parser:
             expr = Binary(expr, operator.type, right)
 
         return expr
+
+    def unary(self):
+        """
+        unary : ( '-' | '+' ) unary | factor
+        """
+        if self._match(TokenType.MINUS, TokenType.PLUS):
+            operator = self._previous()
+            right = self.unary()
+            # Use a Unary node, or Binary with left as None if Unary not defined
+            try:
+                from abstract_syntax_tree import Unary
+
+                return Unary(operator.type, right)
+            except ImportError:
+                return Binary(None, operator.type, right)
+        return self.factor()
 
     def factor(self):
         """
